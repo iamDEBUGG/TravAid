@@ -1,13 +1,13 @@
 {
   "version": 2,
-  "root": "app",
-  "buildCommand": "npm run build",
-  "installCommand": "npm ci",
-  "outputDirectory": "dist/public",
-  "framework": "vite",
-  "nodeVersion": "18.x",
-  "env": {
-    "NODE_ENV": "production"
-  },
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/boot.ts"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
