@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('https://fonts.gstatic.com/s/outfit/v11/QGYvz_MVcBeNP4NJuktqUYLkn8BJ.woff2') format('woff2');
+}
+
+:root {
+  --canvas: #F8F9FC;
+  --surface: #FFFFFF;
+  --text-primary: #0F1729;
+  --text-secondary: rgba(15, 23, 41, 0.55);
+  --text-muted: rgba(15, 23, 41, 0.35);
+  --accent: #6366F1;
+  --accent-light: rgba(99, 102, 241, 0.10);
+  --success: #10B981;
+  --success-light: rgba(16, 185, 129, 0.10);
+  --warning: #F59E0B;
+  --warning-light: rgba(245, 158, 11, 0.10);
+  --danger: #EF4444;
+  --danger-light: rgba(239, 68, 68, 0.10);
+  --border: rgba(15, 23, 41, 0.08);
+  --border-subtle: rgba(15, 23, 41, 0.05);
+
+  --radius: 0.625rem;
+  --background: 0 0% 100%;
+  --foreground: 222 47% 11%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  --primary: 239 84% 67%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222 47% 11%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --input: 214 32% 91%;
+  --ring: 239 84% 67%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply antialiased;
+    background-color: var(--canvas);
+    color: var(--text-primary);
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+  }
+}
