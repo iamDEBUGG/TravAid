@@ -7,6 +7,21 @@ import {
   MapPin, Heart, Scale, Cloud, Activity
 } from 'lucide-react'
 
+function useContainerSize(ref: React.RefObject<HTMLDivElement | null>) {
+  const [size, setSize] = useState({ width: 0, height: 0 })
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const ro = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect
+      setSize({ width: Math.round(width), height: Math.round(height) })
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [ref])
+  return size
+}
+
 function getMarkerColor(score: number) {
   if (score >= 80) return '#10B981'
   if (score >= 50) return '#F59E0B'
@@ -75,6 +90,8 @@ export default function Safety() {
   const [regionFilter, setRegionFilter] = useState('')
   const [hoveredCountry, setHoveredCountry] = useState<string | null>(null)
   const globeRef = useRef<any>(null)
+  const globeContainerRef = useRef<HTMLDivElement>(null)
+  const containerSize = useContainerSize(globeContainerRef)
 
   const { data: countries } = trpc.country.list.useQuery({
     limit: 200, search: search || undefined, region: regionFilter || undefined,
@@ -160,14 +177,15 @@ export default function Safety() {
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
           className="lg:col-span-2 bg-gradient-to-br from-[#0a0e27] to-[#1a1f3a] border border-[var(--border)] rounded-[20px] shadow-lg overflow-hidden relative"
           style={{ minHeight: 520 }}>
-          <div className="absolute inset-0">
+          <div ref={globeContainerRef} className="absolute inset-0 flex items-center justify-center">
+            {containerSize.width > 0 && containerSize.height > 0 && (
             <Globe
               ref={globeRef}
               globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
               bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
               backgroundColor="rgba(0,0,0,0)"
-              width={undefined}
-              height={520}
+              width={containerSize.width}
+              height={containerSize.height}
               atmosphereColor="#6366F1"
               atmosphereAltitude={0.2}
               pointsData={markers}
@@ -188,6 +206,7 @@ export default function Safety() {
               labelAltitude={0.01}
               onLabelClick={(d: any) => handleMarkerClick(d)}
             />
+            )}
           </div>
 
           {/* Hover tooltip */}
