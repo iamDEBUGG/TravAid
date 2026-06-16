@@ -17,7 +17,7 @@ export default function NotFound() {
           className="inline-flex items-center justify-center gap-2 bg-[var(--accent)] text-white px-6 py-3 rounded-full text-[15px] font-medium hover:bg-[var(--accent)]/90 transition-all shadow-sm"
         >
           <Home size={18} />
-          Back to TravAid
+          Back to RoamSense
         </Link>
       </div>
     </div>

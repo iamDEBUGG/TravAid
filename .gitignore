@@ -39,3 +39,7 @@ build/
 # Test coverage
 coverage/
 .nyc_output/
+
+# Vite Cache
+.vite/
+
