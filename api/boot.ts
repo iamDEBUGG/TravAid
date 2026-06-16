@@ -3,6 +3,7 @@ import type { HttpBindings } from "@hono/node-server";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { appRouter } from "./router";
 import { seedStore } from "./lib/seed-mem";
+import { serveStaticFiles } from "./lib/vite";
 
 // Seed in-memory data on startup
 seedStore();
@@ -19,12 +20,16 @@ app.use("/api/trpc/*", async (c) => {
 });
 app.all("/api/*", (c) => c.json({ error: "Not Found" }, 404));
 
+if (process.env.NODE_ENV === "production") {
+  serveStaticFiles(app);
+}
+
 export default app;
 
 if (process.env.NODE_ENV === "production") {
   const { serve } = await import("@hono/node-server");
   const port = parseInt(process.env.PORT || "3000");
   serve({ fetch: app.fetch, port }, () => {
-    console.log(`TravAid running on http://localhost:${port}/`);
+    console.log(`RoamSense running on http://localhost:${port}/`);
   });
 }

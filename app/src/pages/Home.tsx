@@ -51,7 +51,7 @@ export default function Home() {
       >
         <div className="relative z-10">
           <h1 className="text-[28px] sm:text-[32px] font-medium text-white mb-2">
-            Welcome to TravAid
+            Welcome to RoamSense
           </h1>
           <p className="text-[15px] text-white/80 mb-6">
             Track your expenses and explore travel safety insights across the globe.

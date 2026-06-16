@@ -21,9 +21,9 @@ export default function Navigation() {
       <div className="flex items-center justify-between bg-white/92 backdrop-blur-xl border border-[var(--border)] rounded-full px-2 py-1.5 shadow-sm">
         <Link to="/" className="flex items-center gap-2 pl-3">
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--accent)] to-[#818CF8] flex items-center justify-center">
-            <span className="text-white text-sm font-bold">T</span>
+            <span className="text-white text-sm font-bold">R</span>
           </div>
-          <span className="text-[15px] font-semibold text-[var(--text-primary)]">TravAid</span>
+          <span className="text-[15px] font-semibold text-[var(--text-primary)]">RoamSense</span>
         </Link>
 
         <div className="flex items-center gap-1">

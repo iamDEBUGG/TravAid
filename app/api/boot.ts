@@ -25,6 +25,6 @@ if (process.env.NODE_ENV === "production") {
   const { serve } = await import("@hono/node-server");
   const port = parseInt(process.env.PORT || "3000");
   serve({ fetch: app.fetch, port }, () => {
-    console.log(`TravAid running on http://localhost:${port}/`);
+    console.log(`RoamSense running on http://localhost:${port}/`);
   });
 }
