@@ -1,12 +1,13 @@
-import { useState } from 'react'
+import { type ElementType, type FormEvent, useState } from 'react'
 import { trpc } from '@/providers/trpc'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Plus, Search, Calendar, Filter, Trash2, Edit2,
   Utensils, Plane, CreditCard, Film, ShoppingBag, HelpCircle, X
 } from 'lucide-react'
+import SmartExpenseAI from '@/components/SmartExpenseAI'
 
-const categoryIcons: Record<string, React.ElementType> = {
+const categoryIcons: Record<string, ElementType> = {
   food: Utensils, travel: Plane, bills: CreditCard,
   entertainment: Film, shopping: ShoppingBag, other: HelpCircle,
 }
@@ -17,6 +18,7 @@ const categoryColors: Record<string, string> = {
 }
 
 const categories = ['food', 'travel', 'bills', 'entertainment', 'shopping', 'other'] as const
+type ExpenseCategory = (typeof categories)[number]
 
 export default function Expenses() {
   const utils = trpc.useUtils()
@@ -27,7 +29,7 @@ export default function Expenses() {
   const [editingId, setEditingId] = useState<number | null>(null)
 
   const [formData, setFormData] = useState({
-    amount: '', category: 'food' as string, description: '',
+    amount: '', category: 'food' as ExpenseCategory, description: '',
     paymentMethod: '', merchant: '',
     expenseDate: new Date().toISOString().split('T')[0],
   })
@@ -35,6 +37,7 @@ export default function Expenses() {
   const { data, isLoading } = trpc.expense.list.useQuery(
     { page, limit: 12, search: search || undefined, category: categoryFilter || undefined }
   )
+  const { data: aiExpenseData } = trpc.expense.list.useQuery({ page: 1, limit: 100 })
 
   const createMutation = trpc.expense.create.useMutation({
     onSuccess: () => { utils.expense.list.invalidate(); utils.expense.getCategories.invalidate(); utils.expense.getRecent.invalidate(); resetForm() },
@@ -54,7 +57,7 @@ export default function Expenses() {
     setEditingId(null)
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
     if (!formData.amount || isNaN(Number(formData.amount))) return
     if (editingId) {
@@ -62,7 +65,7 @@ export default function Expenses() {
     } else {
       createMutation.mutate({
         amount: formData.amount,
-        category: formData.category as any,
+        category: formData.category,
         description: formData.description || undefined,
         paymentMethod: formData.paymentMethod || undefined,
         merchant: formData.merchant || undefined,
@@ -73,7 +76,7 @@ export default function Expenses() {
 
   const handleEdit = (expense: any) => {
     setFormData({
-      amount: expense.amount, category: expense.category,
+      amount: expense.amount, category: expense.category as ExpenseCategory,
       description: expense.description || '', paymentMethod: expense.paymentMethod || '',
       merchant: expense.merchant || '', expenseDate: expense.expenseDate,
     })
@@ -93,6 +96,8 @@ export default function Expenses() {
           <Plus size={18} /> Add Expense
         </button>
       </div>
+
+      <SmartExpenseAI expenses={aiExpenseData?.items ?? []} />
 
       <div className="flex flex-wrap items-center gap-3 mb-6 bg-white border border-[var(--border)] rounded-2xl p-4 shadow-sm">
         <div className="relative flex-1 min-w-[200px]">
@@ -126,7 +131,7 @@ export default function Expenses() {
               </div>
               <div>
                 <label className="text-[12px] font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-1 block">Category *</label>
-                <select value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })}
+                <select value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value as ExpenseCategory })}
                   className="w-full px-4 py-2.5 rounded-xl border border-[var(--border)] text-[14px] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20">
                   {categories.map(c => <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>)}
                 </select>
