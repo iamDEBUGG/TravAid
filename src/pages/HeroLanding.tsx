@@ -95,8 +95,35 @@ export default function HeroLanding() {
   const scrollIndicatorControls = useAnimation()
 
   // ─── Check for touch device & reduced motion ───
-  const isTouchDevice = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0)
+  const [mouseDetected, setMouseDetected] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return !('ontouchstart' in window || navigator.maxTouchPoints > 0)
+  })
   const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  // Log internal state for debugging
+  console.log('HeroLanding State:', { mouseDetected, prefersReducedMotion })
+
+  useEffect(() => {
+    if (mouseDetected) return
+    let lastX: number | null = null
+    let lastY: number | null = null
+    const handleInitialMouseMove = (e: MouseEvent) => {
+      if (lastX === null || lastY === null) {
+        lastX = e.clientX
+        lastY = e.clientY
+        return
+      }
+      const deltaX = Math.abs(e.clientX - lastX)
+      const deltaY = Math.abs(e.clientY - lastY)
+      // Check if mouse actually moved more than 2 pixels (avoids touch event noise)
+      if (deltaX > 2 || deltaY > 2) {
+        setMouseDetected(true)
+      }
+    }
+    window.addEventListener('mousemove', handleInitialMouseMove)
+    return () => window.removeEventListener('mousemove', handleInitialMouseMove)
+  }, [mouseDetected])
 
   // ─── Parallax + cursor system ───
   const mouseState = useRef({
@@ -129,7 +156,7 @@ export default function HeroLanding() {
 
   // ─── Main animation loop ───
   useEffect(() => {
-    if (isTouchDevice || prefersReducedMotion) return
+    if (!mouseDetected || prefersReducedMotion) return
 
     const lerpFactor = 0.1
     const orbLerp = 0.04
@@ -190,15 +217,20 @@ export default function HeroLanding() {
       document.removeEventListener('mouseover', handleMouseOver)
       cancelAnimationFrame(animFrameRef.current)
     }
-  }, [handleMouseMove, handleMouseOver, isTouchDevice, prefersReducedMotion])
+  }, [handleMouseMove, handleMouseOver, mouseDetected, prefersReducedMotion])
 
   // ─── Touch device: auto-float via CSS animation ───
   useEffect(() => {
-    if (!isTouchDevice) return
+    if (mouseDetected) {
+      if (layer1Ref.current) layer1Ref.current.style.animation = ''
+      if (layer2Ref.current) layer2Ref.current.style.animation = ''
+      if (layer3Ref.current) layer3Ref.current.style.animation = ''
+      return
+    }
     if (layer1Ref.current) layer1Ref.current.style.animation = 'float-auto-1 8s ease-in-out infinite'
     if (layer2Ref.current) layer2Ref.current.style.animation = 'float-auto-2 10s ease-in-out infinite'
     if (layer3Ref.current) layer3Ref.current.style.animation = 'float-auto-3 12s ease-in-out infinite'
-  }, [isTouchDevice])
+  }, [mouseDetected])
 
   // ─── Page entrance sequence ───
   useEffect(() => {
@@ -328,12 +360,12 @@ export default function HeroLanding() {
       )}
 
       {/* ─── Ambient Cursor Orb ─── */}
-      {!isTouchDevice && !prefersReducedMotion && (
+      {mouseDetected && !prefersReducedMotion && (
         <div ref={orbRef} className="ambient-orb" aria-hidden="true" />
       )}
 
       {/* ─── Custom Cursor Dot ─── */}
-      {!isTouchDevice && !prefersReducedMotion && (
+      {mouseDetected && !prefersReducedMotion && (
         <div ref={cursorDotRef} className="cursor-dot" aria-hidden="true" />
       )}
 
