@@ -43,3 +43,5 @@ coverage/
 # Vite Cache
 .vite/
 
+# Netlify Config
+.netlify/
