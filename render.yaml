@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: travaid
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    autoDeploy: true
+    healthCheckPath: /api/trpc/ping
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: APP_ID
+        sync: false
+      - key: APP_SECRET
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: KIMI_AUTH_URL
+        sync: false
+      - key: KIMI_OPEN_URL
+        sync: false
+      - key: OWNER_UNION_ID
+        sync: false
+      - key: VITE_APP_ID
+        sync: false
+      - key: VITE_KIMI_AUTH_URL
+        sync: false
